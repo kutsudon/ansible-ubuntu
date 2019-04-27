@@ -1,32 +1,24 @@
-- hosts: localhost
-  sudo: true
+    
+- name: check apt last update
+  stat: path=/var/cache/apt
+  register: apt_cache_stat
+    
+- name: update apt if needed
+  apt: update_cache=yes
+  when: ansible_date_time.epoch|float - apt_cache_stat.stat.mtime > 60*60*12
+    
+- name: do apt-get update --fix-missing
+  command: apt-get update --fix-missing
+
+- name: install python-software-properties
+  apt: pkg=python-software-properties state=present
+
+- name: add ubuntugis-unstable
+  apt_repository: repo='ppa:ubuntugis/ubuntugis-unstable' state=present update_cache=yes
   
-  pre_tasks:
+- name: install base packages
+  apt: pkg={{item}} state=present update_cache=yes cache_valid_time=604800
+  with_items:
+  - qgis
     
-  - name: check apt last update
-    stat: path=/var/cache/apt
-    register: apt_cache_stat
-    
-  - name: update apt if needed
-    apt: update_cache=yes
-    when: ansible_date_time.epoch|float - apt_cache_stat.stat.mtime > 60*60*12
-    
-  tasks:
-    
-  - name: do apt-get update --fix-missing
-    command: apt-get update --fix-missing
 
-  - name: install python-software-properties
-    apt: pkg=python-software-properties state=present
-
-  - name: add ubuntugis-unstable
-    apt_repository: repo='ppa:ubuntugis/ubuntugis-unstable' state=present update_cache=yes
-    
-  - name: install base packages
-    apt: pkg={{item}} state=present update_cache=yes cache_valid_time=604800
-    with_items:
-    - qgis
-    
-- hosts: localhost
-  connection: local
-  gather_facts: False
