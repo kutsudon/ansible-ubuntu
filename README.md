@@ -10,10 +10,19 @@ Ansible roles to setup Ubuntu desktop and Ubuntu server (14.04 and 16.04). This 
 ## Installation
 First, you need to install Git and Ansible :
 ```
-sudo apt-get install git
-git clone https://github.com/Benoth/ansible-ubuntu.git
+Install ubuntu
+sudo apt-get upgrade -y
+sudo apt-get update -y
+sudo apt-get install -y git
+cd ~/
+mkdir ansible
+cd ansible
+git clone https://github.com/kutsudon/ansible-ubuntu.git
 cd ansible-ubuntu
-./install.sh
+sudo ./install.sh
+cd ansible-ubuntu
+sudo ansible-playbook ansible-desktop.yml
+reboot
 ```
 
 Then you need to customize the playbook `ansible-desktop.yml` (or create a new one) to suit your needs. Every roles are disabled by default.
